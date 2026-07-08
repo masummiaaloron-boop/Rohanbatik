@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - LuxeStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="light-mode">
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-gem"></i> <span>Luxe Admin</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><button class="active" onclick="switchAdminPage('dashboard', this)"><i class="fa-solid fa-chart-line"></i> Dashboard</button></li>
+                    <li><button onclick="switchAdminPage('products', this)"><i class="fa-solid fa-box"></i> Products</button></li>
+                    <li><button onclick="switchAdminPage('categories', this)"><i class="fa-solid fa-tags"></i> Categories</button></li>
+                    <li><button onclick="switchAdminPage('slider', this)"><i class="fa-solid fa-images"></i> Hero Slider</button></li>
+                    <li><button onclick="switchAdminPage('testimonials', this)"><i class="fa-solid fa-comments"></i> Testimonials</button></li>
+                    <li><button onclick="switchAdminPage('faq', this)"><i class="fa-solid fa-circle-question"></i> FAQ</button></li>
+                    <li><button onclick="switchAdminPage('orders', this)"><i class="fa-solid fa-receipt"></i> Orders</button></li>
+                    <li><button onclick="switchAdminPage('settings', this)"><i class="fa-solid fa-sliders"></i> Settings</button></li>
+                </ul>
+                <div class="sidebar-section-label">Account</div>
+                <ul>
+                    <li><button onclick="logoutAdmin()" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Body -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h2>Admin Management Panel</h2>
+                <div class="flex items-center gap-12">
+                    <button id="theme-toggle" class="nav-btn"><i class="fa-solid fa-moon"></i></button>
+                    <a href="index.html" class="btn btn-ghost btn-sm" target="_blank"><i class="fa-solid fa-earth-americas"></i> View Site</a>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- 1. DASHBOARD PAGE -->
+                <section id="page-dashboard" class="admin-page active">
+                    <div class="panel-top">
+                        <h2>Analytics Dashboard</h2>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
+                            <div class="stat-value" id="stat-orders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                            <div class="stat-value" id="stat-revenue">$0.00</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-value" id="stat-visitors">0</div>
+                            <div class="stat-label">Store Visitors</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="stat-value" id="stat-products">0</div>
+                            <div class="stat-label">Active Products</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <!-- Chart -->
+                        <div class="chart-area">
+                            <h3>Monthly Performance Overview</h3>
+                            <div class="bar-chart">
+                                <div class="bar-wrap"><div class="bar" style="height: 35%;"></div><span class="bar-label">Apr</span></div>
+                                <div class="bar-wrap"><div class="bar" style="height: 55%;"></div><span class="bar-label">May</span></div>
+                                <div class="bar-wrap"><div class="bar" style="height: 80%;"></div><span class="bar-label">Jun</span></div>
+                                <div class="bar-wrap"><div class="bar" style="height: 95%;"></div><span class="bar-label">Jul (Now)</span></div>
+                            </div>
+                        </div>
+                        <!-- Top Products -->
+                        <div class="chart-area">
+                            <h3>Best Sellers &amp; Top Products</h3>
+                            <div class="top-products-list" id="dashboard-top-products">
+                                <!-- Dynamic Top Products -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. MANAGE PRODUCTS -->
+                <section id="page-products" class="admin-page">
+                    <div class="panel-top">
+                        <h2>Manage Products</h2>
+                        <button class="btn btn-primary" onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add New Product</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status Badges</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 3. MANAGE CATEGORIES -->
+                <section id="page-categories" class="admin-page">
+                    <div class="panel-top">
+                        <h2>Manage Categories</h2>
+                        <button class="btn btn-primary" onclick="openAddCategoryModal()"><i class="fa-solid fa-plus"></i> Add New Category</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Name</th>
+                                    <th>Product Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 4. MANAGE HERO SLIDER -->
+                <section id="page-slider" class="admin-page">
+                    <div class="panel-top">
+                        <h2>Manage Hero Banner Slider</h2>
+                        <button class="btn btn-primary" onclick="openAddSlideModal()"><i class="fa-solid fa-plus"></i> Add New Slide</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Subtitle</th>
+                                    <th>Badge</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slider-table-body">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 5. MANAGE TESTIMONIALS -->
+                <section id="page-testimonials" class="admin-page">
+                    <div class="panel-top">
+                        <h2>Manage Testimonials</h2>
+                        <button class="btn btn-primary" onclick="openAddTestimonialModal()"><i class="fa-solid fa-plus"></i> Add New Testimonial</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Client Name</th>
+                                    <th>Role</th>
+                                    <th>Stars</th>
+                                    <th>Review Text</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="testimonials-table-body">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 6. MANAGE FAQ -->
+                <section id="page-faq" class="admin-page">
+                    <div class="panel-top">
+                        <h2>Manage FAQ</h2>
+                        <button class="btn btn-primary" onclick="openAddFAQModal()"><i class="fa-solid fa-plus"></i> Add New FAQ</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Answer</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="faq-table-body">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 7. VIEW ORDERS -->
+                <section id="page-orders" class="admin-page">
+                    <div class="panel-top">
+                        <h2>Order Tracking &amp; History</h2>
+                        <button class="btn btn-ghost" onclick="exportOrdersJSON()"><i class="fa-solid fa-download"></i> Export Orders JSON</button>
+                    </div>
+                    
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="order-search-input" placeholder="Search orders by customer name, order ID, or city..." oninput="filterOrders()">
+                    </div>
+
+                    <div class="order-filter-tabs">
+                        <button class="order-tab active" onclick="filterOrdersByStatus('all', this)">All Orders</button>
+                        <button class="order-tab" onclick="filterOrdersByStatus('pending', this)">Pending</button>
+                        <button class="order-tab" onclick="filterOrdersByStatus('confirmed', this)">Confirmed</button>
+                        <button class="order-tab" onclick="filterOrdersByStatus('delivered', this)">Delivered</button>
+                        <button class="order-tab" onclick="filterOrdersByStatus('cancelled', this)">Cancelled</button>
+                    </div>
+
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Details</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 8. MANAGE WEBSITE SETTINGS -->
+                <section id="page-settings" class="admin-page">
+                    <div class="panel-top">
+                        <h2>Global Website Settings</h2>
+                    </div>
+                    <form id="settings-form" class="glass-panel" style="padding: 32px;" onsubmit="saveWebSettings(event)">
+                        <div class="settings-section">
+                            <h3>Brand Styling &amp; Theme</h3>
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label>Site Name</label>
+                                    <input type="text" id="set-site-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Theme Primary Color</label>
+                                    <div class="flex items-center gap-8">
+                                        <input type="color" id="set-theme-color" style="width: 44px; height: 38px; padding: 2px; cursor: pointer;">
+                                        <input type="text" id="set-theme-color-hex" placeholder="#7c3aed" style="flex:1" oninput="document.getElementById('set-theme-color').value = this.value">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Customer Support &amp; Social Channels</h3>
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="text" id="set-phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>WhatsApp Link</label>
+                                    <input type="text" id="set-whatsapp" placeholder="https://wa.me/...">
+                                </div>
+                                <div class="form-group">
+                                    <label>Facebook URL</label>
+                                    <input type="text" id="set-facebook">
+                                </div>
+                                <div class="form-group">
+                                    <label>Instagram URL</label>
+                                    <input type="text" id="set-instagram">
+                                </div>
+                                <div class="form-group">
+                                    <label>Messenger Link</label>
+                                    <input type="text" id="set-messenger">
+                                </div>
+                                <div class="form-group">
+                                    <label>YouTube Channel</label>
+                                    <input type="text" id="set-youtube">
+                                </div>
+                                <div class="form-group">
+                                    <label>TikTok URL</label>
+                                    <input type="text" id="set-tiktok">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Logistics &amp; Sales Campaigns</h3>
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label>Standard Delivery Charge ($)</label>
+                                    <input type="number" id="set-delivery" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Default Promo Coupon</label>
+                                    <input type="text" id="set-coupon" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Coupon Discount (%)</label>
+                                    <input type="number" id="set-coupon-discount" min="0" max="100" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Announcement Bar &amp; Entry Popups</h3>
+                            <div class="form-group">
+                                <label>Announcement Text Message</label>
+                                <textarea id="set-announcement" rows="2" required></textarea>
+                            </div>
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label>Enable Marketing Popup</label>
+                                    <select id="set-popup-enabled">
+                                        <option value="true">Yes, Enable Popup</option>
+                                        <option value="false">No, Disable Popup</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Popup Title Header</label>
+                                    <input type="text" id="set-popup-title">
+                                </div>
+                                <div class="form-group">
+                                    <label>Popup Promo Code</label>
+                                    <input type="text" id="set-popup-code">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Popup Description Body</label>
+                                <textarea id="set-popup-desc" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large"><i class="fa-solid fa-floppy-disk"></i> Save All Settings</button>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===================== MODALS ===================== -->
+    
+    <!-- Product Add/Edit Modal -->
+    <div class="modal" id="modal-product">
+        <div class="modal-box">
+            <h3 id="product-modal-title">Add New Product</h3>
+            <form id="product-form" onsubmit="saveProduct(event)">
+                <input type="hidden" id="prod-form-id">
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="prod-form-name" required>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="prod-form-category" required>
+                            <!-- Dynamic selection options -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating (1.0 to 5.0)</label>
+                        <input type="number" id="prod-form-rating" step="0.1" min="1" max="5" value="5" required>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Normal Selling Price ($)</label>
+                        <input type="number" id="prod-form-price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Original Reference Price ($)</label>
+                        <input type="number" id="prod-form-original-price" step="0.01" placeholder="Optional">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Upload Product Image</label>
+                    <input type="file" id="prod-form-image-file" accept="image/*" onchange="previewImageUpload(this, 'prod-image-preview')">
+                    <input type="hidden" id="prod-form-image-base64">
+                    <img id="prod-image-preview" class="image-upload-preview">
+                </div>
+                <div class="form-group">
+                    <label>Description Body</label>
+                    <textarea id="prod-form-desc" rows="3" required></textarea>
+                </div>
+                <div class="settings-grid mb-24">
+                    <div class="form-group" style="flex-direction:row; gap:8px; align-items:center;">
+                        <input type="checkbox" id="prod-form-featured" style="width:auto; margin:0;">
+                        <label for="prod-form-featured" style="margin:0;">Featured Product</label>
+                    </div>
+                    <div class="form-group" style="flex-direction:row; gap:8px; align-items:center;">
+                        <input type="checkbox" id="prod-form-bestseller" style="width:auto; margin:0;">
+                        <label for="prod-form-bestseller" style="margin:0;">Best Seller Badge</label>
+                    </div>
+                    <div class="form-group" style="flex-direction:row; gap:8px; align-items:center;">
+                        <input type="checkbox" id="prod-form-newarrival" style="width:auto; margin:0;">
+                        <label for="prod-form-newarrival" style="margin:0;">New Arrival Badge</label>
+                    </div>
+                    <div class="form-group" style="flex-direction:row; gap:8px; align-items:center;">
+                        <input type="checkbox" id="prod-form-flashsale" style="width:auto; margin:0;">
+                        <label for="prod-form-flashsale" style="margin:0;">Flash Sale Candidate</label>
+                    </div>
+                </div>
+
+                <div class="flex gap-12" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('modal-product')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal" id="modal-category">
+        <div class="modal-box">
+            <h3 id="category-modal-title">Add New Category</h3>
+            <form id="category-form" onsubmit="saveCategory(event)">
+                <input type="hidden" id="cat-form-id">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="cat-form-name" required>
+                </div>
+                <div class="form-group">
+                    <label>FontAwesome Icon Class</label>
+                    <input type="text" id="cat-form-icon" placeholder="fa-solid fa-gem" required>
+                </div>
+                <div class="flex gap-12" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('modal-category')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Slide Modal -->
+    <div class="modal" id="modal-slide">
+        <div class="modal-box">
+            <h3 id="slide-modal-title">Add New Slide</h3>
+            <form id="slide-form" onsubmit="saveSlide(event)">
+                <input type="hidden" id="slide-form-id">
+                <div class="form-group">
+                    <label>Title Header</label>
+                    <input type="text" id="slide-form-title" required>
+                </div>
+                <div class="form-group">
+                    <label>Subtitle / Description</label>
+                    <input type="text" id="slide-form-subtitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Badge Tag</label>
+                    <input type="text" id="slide-form-badge" placeholder="e.g. New Trend" required>
+                </div>
+                <div class="form-group">
+                    <label>Slide Image Upload</label>
+                    <input type="file" id="slide-form-image-file" accept="image/*" onchange="previewImageUpload(this, 'slide-image-preview')">
+                    <input type="hidden" id="slide-form-image-base64">
+                    <img id="slide-image-preview" class="image-upload-preview">
+                </div>
+                <div class="form-group">
+                    <label>CTA Target Action Link</label>
+                    <input type="text" id="slide-form-link" placeholder="#featured" value="#featured" required>
+                </div>
+                <div class="flex gap-12" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('modal-slide')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Slide</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Testimonial Modal -->
+    <div class="modal" id="modal-testimonial">
+        <div class="modal-box">
+            <h3 id="testimonial-modal-title">Add New Testimonial</h3>
+            <form id="testimonial-form" onsubmit="saveTestimonial(event)">
+                <input type="hidden" id="test-form-id">
+                <div class="form-group">
+                    <label>Client Name</label>
+                    <input type="text" id="test-form-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Professional Role</label>
+                    <input type="text" id="test-form-role" required>
+                </div>
+                <div class="form-group">
+                    <label>Rating Rating (1-5 Stars)</label>
+                    <input type="number" id="test-form-stars" min="1" max="5" value="5" required>
+                </div>
+                <div class="form-group">
+                    <label>Review Content Text</label>
+                    <textarea id="test-form-text" rows="3" required></textarea>
+                </div>
+                <div class="flex gap-12" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('modal-testimonial')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Testimonial</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div class="modal" id="modal-faq">
+        <div class="modal-box">
+            <h3 id="faq-modal-title">Add New FAQ</h3>
+            <form id="faq-form" onsubmit="saveFAQ(event)">
+                <input type="hidden" id="faq-form-id">
+                <div class="form-group">
+                    <label>Frequently Asked Question</label>
+                    <input type="text" id="faq-form-question" required>
+                </div>
+                <div class="form-group">
+                    <label>Polished Answer Message</label>
+                    <textarea id="faq-form-answer" rows="3" required></textarea>
+                </div>
+                <div class="flex gap-12" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('modal-faq')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save FAQ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Detail View Modal -->
+    <div class="modal" id="modal-order-view">
+        <div class="modal-box" style="max-width: 600px;">
+            <h3>Order Information &amp; Delivery Tracking</h3>
+            <div id="order-modal-details">
+                <!-- Dynamic loaded fields -->
+            </div>
+            <div class="flex gap-12" style="justify-content: flex-end; margin-top: 24px;">
+                <button type="button" class="btn btn-primary" onclick="closeModal('modal-order-view')">Close Details</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="assets/js/db.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>
